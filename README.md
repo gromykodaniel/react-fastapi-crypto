@@ -1,6 +1,6 @@
 
 #  Tracker of crypto price 
-![app.png](docs/app.png)
+![app.png](frontend/app.png)
 
 
 ## Using Technologuies 
