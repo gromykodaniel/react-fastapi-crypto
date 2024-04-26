@@ -1,15 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {
-    AppstoreOutlined,
-    ContainerOutlined,
-    DesktopOutlined,
-    MailOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    PieChartOutlined,
-} from '@ant-design/icons';
-import { Button, Menu } from 'antd';
+import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import {Menu, Spin} from 'antd';
 import axios from "axios";
+import CryptocurrencyCard from "./components/CryptoCurrency.jsx";
 function getItem(label, key, icon, children, type) {
     return {
         key,
@@ -19,52 +12,65 @@ function getItem(label, key, icon, children, type) {
         type,
     };
 }
-const items = [
-    getItem('Option 1', '1', <PieChartOutlined />),
 
-
-];
 const App = () => {
+    const [currencies, setCurrencies] = useState([])
+    const [currencyId, setCurrencyId] = useState(1)
+    const [currencyData, setCurrencyData] = useState(null)
 
-    const [currencies , setcurrencies] = useState([])
-
-
-    const fetchCur = () => {
-
-        axios.get('http://127.0.0.1:8000/cryptocurriencies').then(responce =>{
-            const ans = r.data
-
-
-
+    const fetchCurrencies = () => {
+        axios.get('http://127.0.0.1:8000/cryptocurriencies/').then(r => {
+            const currenciesResponse = r.data
+            const menuItems = [
+                getItem('Список криптовалют', 'g1', null,
+                    currenciesResponse.map(c => {
+                        return {label: c.name, key: c.id}
+                    }),
+                    'group'
+                )
+            ]
+            setCurrencies(menuItems)
         })
+    }
 
+    const fetchCurrency = () => {
+        axios.get(`http://127.0.0.1:8000/cryptocurriencies/${currencyId}`).then(r => {
+            setCurrencyData(r.data)
+        })
     }
 
     useEffect(() => {
-        fetchCur()
+        fetchCurrencies()
     }, []);
 
 
+    useEffect(() => {
+        setCurrencyData(null)
+        fetchCurrency()
+    }, [currencyId]);
 
-    const [collapsed, setCollapsed] = useState(false);
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
+    const onClick = (e) => {
+        setCurrencyId(e.key)
     };
-    return (
-        <div
-            style={{
-                width: 256,
-            }}
-        >
 
+    return (
+        <div className="flex  " style={{color: 'white'}}>
             <Menu
+                onClick={onClick}
+                style={{
+                    width: 256,
+                    background:'#151515' ,
+                    color: 'white',
+                }}
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
                 mode="inline"
-                theme="dark"
-                inlineCollapsed={collapsed}
-                items={items}
+                items={currencies}
+                className="h-screen overflow-scroll"
             />
+            <div className="mx-auto my-auto">
+                {currencyData ? <CryptocurrencyCard currency={currencyData}/> : <Spin size="large"/>}
+            </div>
         </div>
     );
 };

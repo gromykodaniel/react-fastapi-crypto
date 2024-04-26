@@ -1,7 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+.ant-menu-title-content{
+  color: wheat;
+}
+.ant-menu-item ant-menu-item-active ant-menu-item-selected ant-menu-item-only-child{
+  background-color: red;
+}
+.ant-menu-item-group-title{
+  color: white;
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
